@@ -1,0 +1,2381 @@
+---
+title: "R Primer"
+subtitle: "Department of Population Health Sciences Master's Program"
+author: Kara McCormack
+format:
+  revealjs: 
+    slide-number: true
+    theme: default
+    chalkboard: 
+      buttons: false
+    preview-links: auto
+    logo: images/pop_health_logo.png
+    css: styles.css
+    execute: 
+      freeze: auto
+resources:
+  - demo.pdf
+---
+
+## Welcome!
+
+**A few notes**
+
+-   Slides are available via Box link: 
+-   Email if there are specific tasks you want to be able to accomplish in R (kem81\@duke.edu)
+-   Some of these slides are adapted from:
+    -   [Thomas Mock's Intro to Tidyverse](https://www.youtube.com/watch?v=MKwyauo8nSI&ab_channel=ThomasMock)
+    -   [Garrett Grolemund's Remaster the Tidyverse Workshop](https://github.com/rstudio-education/remaster-the-tidyverse)
+
+## Introductions
+
+-   Name
+-   Where are you from?
+-   Have you used R before? 
+    - If no, what skills (if any) are you interested in learning?
+    - If yes, any skills you're looking to review/refresh?
+
+## Setup: Part 1
+
+1. Create a new project in RStudio, called RPrimer2022.
+2. Download example_markdown.Rmd from the box folder, and move it into your RPrimer2022 folder. (You should see it now in your Files pane).  
+3. Open the markdown_example.Rmd file. 
+4. Install packages that are not yet installed. 
+5. Click "Knit > Knit to HTML"
+
+This is a sneak peek at *some* of what we will learn in the R Primer. 
+
+## Setup: Part 2
+
+5. Download the Exercises.Rmd file from Box, move to RPrimer2022 folder. 
+6. Open the Exercises.Rmd file.
+7. Run the first code chunk (the one that starts with `# load libraries`) in the .Rmd file by clicking on the green arrow at the top right of the chunk. 
+
+## Outline
+
+-   Introduction to R
+-   Introduction to Rstudio
+-   Transform Data
+-   Plot Data
+-   Model Data
+
+# Introduction to R
+
+## Programming is a Learned Skill!
+
+```{r}
+#| eval: false
+library(babynames)
+library(tidyverse)
+```
+
+-   Practice & patience.
+-   Small wins turn into large success.
+-   Goal of the primer is to learn to use RStudio to explore data and get help when things don't work (it will happen often!)
+
+
+## Introducing R
+
+::: columns
+
+::: {.column width="70%"}
+
+::: {style="font-size: .8em"}
+-   Open-source programming language and software environment for statistical computing and graphics
+-   Created in 1996
+-   Created by **R**oss Ihaka and **R**obert Gentleman (University of Auckland, New Zealand)
+-   Currently supported by R Foundation for Statistical Computing (Vienna, Austria)
+-   More information on the history of R at https://www.R-project.org
+
+:::
+:::
+
+::: {.column width="20%"}
+
+![](images/r.png)
+:::
+:::
+## R Basics
+
+-   Math
+-   Assignments
+-   Functions
+-   Load and installing packages
+
+## Math with R
+
+::: {style="font-size: 1.4em; text-align: center"}
+```{r}
+#| echo: true
+# some math
+5 + 7
+```
+
+```{r}
+#| echo: true
+3.14*3
+```
+
+:::
+
+- Run code by highlighting code and then Cmd+Enter (for Mac) or Ctrl+Enter (for PC). 
+
+- In .Rmd files, can also run entire chunks with green arrow. 
+- Add comments with the `#`
+
+
+## Objects in R
+
+- R is an object-oriented programming language
+    - Objects can be very complex (e.g. output from a regression analysis) or very simple (e.g. a matrix). 
+    
+- In their simplest form, you can think of objects as
+    - Container + element
+    - Example: 
+        - Container = Matrix
+        - Element = Numbers
+        - Object = Numeric Matrix
+
+## R is a functional language
+
+:::{.incremental}
+- [Values]{style="color:darkcyan"}: 3, "California", "2015-03-07"
+
+- [Objects]{style="color:darkcyan"}: x <- [c(]{style="color:#cc0000"}5/6, 0.83, 7[)]{style="color:#cc0000"}
+  - To assign a value to an object, use `<-`
+  - To assign multiple values into an object, use [c()]{style="color:#cc0000"}, stands for "combine"
+- [Functions]{style="color:darkcyan"}: [round]{style="color:#cc0000"}(x, digits = 3)
+  - name without quotes
+  - followed by () to run the function
+  - digits = an argument of function
+:::
+
+::: notes
+possible homework about data structures:
+https://swcarpentry.github.io/r-novice-inflammation/13-supp-data-structures/
+:::
+
+## R Objects
+
+- Data Objects / Structures
+    - Scalars
+    - Vectors
+    - Matrices
+    - Arrays
+    - Data Frames
+    - Lists
+
+## Example: Scalars (a single element)
+
+Numeric, character, and logical are three of the "modes" used in R, and the ones we will most commonly work with. 
+```{r}
+#| echo: true
+#| eval: true
+s1 <- 2     # numeric
+s2 <- "Hi!" # character
+s3 <- TRUE  # logical
+```
+
+```{r}
+s1  # numeric
+s2  # character
+s3  # logical
+```
+
+## Vectors (stacks of scalars)
+
+`rep` creates a vector of values: first input is the value, and second input is how many times to repeat. 
+
+`seq` creates a sequence of values: first input is start, second input is end value, then specify `by = ` for the increment length. 
+
+::: {style="font-size: 1.2em; text-align: center"}
+```{r}
+#| echo: true
+a <- rep(1, 4)
+b <- seq(1, 2, by = .2)
+a
+b
+c <- c(a, b)
+c
+```
+:::
+
+## Matrices (stacks of vectors)
+Created using the R function `matrix()`
+
+```{r}
+#| echo: true
+#| eval: false
+matrix(data, nrow, ncol, 
+       byrow = FALSE, dimnames)
+```
+
+
+```{r}
+#| echo: true
+M1 <- matrix(1:6, 3, 2)
+M2 <- matrix(1:6, 3, 2, byrow = TRUE)
+```
+
+```{r}
+#| echo: false
+M1
+M2
+```
+
+## Data frames
+Allow you to combine vectors of different modes together to create a dataset (essentially a matrix)
+  - Create using the R function `data.frame()`
+
+```{r}
+#| echo: true
+#| eval: false
+data.frame(data, ...)
+```
+
+## Example: data frames
+
+```{r}
+#| echo: true
+#| eval: true
+num <- 1:4
+chr <- c("M", "F", "F", "M")
+log <- c(TRUE, TRUE, FALSE, TRUE)
+D1 <- data.frame(num, chr, log)
+D1
+```
+
+## Example: round function
+
+::: {style="font-size: 1.8em; text-align: center"}
+```{r}
+#| echo: true
+x <- c(7/8, 2.5434, 7)
+round(x, digits = 3)
+```
+:::
+
+- To access the help pages on any function, type `?function` in the console. 
+- Error messages can also sometimes be helpful to point you in the right direction. 
+
+## Example: vectorization
+
+::: {style="font-size: 1.8em; text-align: center"}
+```{r}
+#| echo: true
+a <- c(1, 2, 3)
+b <- c(3, 4, 5)
+```
+
+```{r}
+#| echo: true
+a + b
+
+a * b
+```
+:::
+
+
+## Example: functions
+
+::: {style="font-size: 1.8em; text-align: center"}
+```{r}
+#| echo: true
+
+values <- c(1:10, 17)
+print(values)
+mean(values)
+median(values)
+sd(values)
+
+```
+:::
+
+
+## R symbols
+
+::: columns
+::: {.column width="50%"}
+
+See
+
+- `<-`
+- `%>%`
+- `==`
+- `=`
+:::
+
+::: {.column width="50%"}
+
+Say
+
+- Gets
+- And then
+- Compare
+- Assign
+
+:::
+:::
+
+For assignment, I recommend using `<-` instead of `=` to reduce confusion!
+
+## Example
+
+::: {style="font-size: 1.4em; text-align: center"}
+```{r}
+#| echo: true
+1:5              # vector of numbers 1 through 5
+c <- 1:5         # assign to the object c
+print(c)         # print contents
+d <- c(0, 1, 7, 7, 7)
+print(d)
+c < d            # compare each value
+```
+:::
+
+## Your turn!
+
+In your groups, open the "Exercises.Rmd" file, and complete Exercise 1. 
+
+# R Packages
+
+## Functions and packages
+
+![](images/f5.png)
+
+
+## Functions and packages
+
+![](images/f6.png)
+
+# Introduction to RStudio
+
+## Intro to RStudio
+
+::: {style="font-size: 0.8em"}
+
+-   RStudio is an IDE (Integrated Development Environment)
+-   A place to write
+    -   Console, R Scripts, R Markdown
+-   A place to open things
+    -   Open plots, data, R (.R) or R Markdown (.Rmd) files
+-   A place for projects
+    -   Self-contained structure
+    -   Keep relevant files/code together with output
+
+:::
+
+
+## RStudio Interface
+
+::: columns
+::: {.column width="70%"}
+![](images/f4.png)
+:::
+
+::: {.column width="20%"}
+
+:::
+:::
+
+# Basics of R Markdown
+
+## Demo: R Markdown basics
+
+- Opening a new R markdown file (.Rmd)
+- Creating new code chunks
+- Running code chunks
+
+
+## Projects
+
+- I highly recommend using Projects!
+- Knitting document into .html can be a great way to share progress with collaborators
+- Projects allows you to keep all relevant files in one place
+- When you're in a Project session in RStudio, your working directory gets set to that project
+  - Anytime you import/export, points to this directory
+- Print working directory with `getwd()`
+
+
+# Tidyverse
+
+## Programming pattern
+
+In data analysis projects, will likely go through the following steps. Each step is quite important to a successful analysis. 
+
+![](images/tidyprogram.png)
+
+
+## Tidyverse
+
+::: columns
+::: {.column width="50%"}
+
+::: {style="fig-width: 0.8em"}
+
+![](images/f8.png)
+:::
+
+:::
+
+::: {.column width="40%"}
+
+- A collection of R packages developed by H. Wickham and others at RStudio. 
+
+
+:::
+:::
+
+## Tidyverse
+
+[tidyverse.org](tidyverse.org)
+
+![](images/tidy.png)
+
+## r4ds
+The ultimate resource for much of today!
+
+::: {style="font-size: 1.6em"}
+[r4ds.had.co.nz](r4ds.had.co.nz)
+:::
+
+::: columns
+
+::: {.column width="70%"}
+![](images/r4ds.png)
+:::
+
+::: {.column width="10%"}
+
+:::
+:::
+
+## Using packages
+
+::: {style="font-size: 1.8em; text-align: center"}
+```{r}
+#| echo: true
+#| eval: false
+install.packages("foo")
+library(foo)
+```
+
+:::
+
+ - downloads files to computer
+ - only need to install 1x per computer
+ - load the packages  with `library` 1x per session
+ 
+## Tidyverse packages
+
+::: columns
+::: {.column width="50%"}
+
+```{r}
+#| echo: true
+#| eval: false
+install.packages("ggplot2") 		
+install.packages("dplyr")
+install.packages("tidyr")			
+install.packages("readr")
+install.packages("purrr")			
+install.packages("tibble")
+install.packages("hms")				
+install.packages("stringr")
+install.packages("lubridate")	
+install.packages("forcats")
+```
+
+:::
+
+::: {.column width="50%"}
+
+```{r}
+#| echo: true
+#| eval: false
+install.packages("DBI")				
+install.packages("haven")
+install.packages("httr")				
+install.packages("jsonlite")
+install.packages("readxl")		
+install.packages("rvest")
+install.packages("xml2")				
+install.packages("modelr")
+install.packages("broom")
+```
+
+:::
+
+:::
+
+
+## Tidyverse
+
+An R package that serves as a shortcut for installing and loading the components of the tidyverse. 
+
+::: {style="font-size: 1.8em; text-align: center"}
+
+```{r}
+#| echo: true
+#| eval: false
+install.packages("tidyverse")	
+```
+
+
+:::
+
+- This code does the equivalent of that on the previous slide
+
+
+## Tidy data
+
+- Tidyverse is based on a type of organization called "tidy data"
+- Main characteristics of tidy data
+
+  - each variable is a column
+  - each observation is a row
+  - each value is a different cell
+
+- Having this setup allows the functions of tidyverse to work together coherently from one step to the next in your programming pattern. 
+
+![](images/tidydata.png)
+
+# Reading in data
+
+## Reading in data: point and click
+
+ - Environment pane: Import dataset from test (readr)
+
+![](images/import1.png)
+
+## Reading in data: point and click
+
+![](images/import2.png)
+
+
+## Reading in data with code
+
+ - Highly recommend for code reproducibility
+ - Code version: `read_csv`
+ - Take note of working directory
+ - `getwd()` shows working directory
+ 
+```{r}
+#| echo: true
+#| eval: false
+data <- read_csv(<PATH TO DATA>)
+data
+```
+
+## Exercise 2
+
+The iris dataset gives the measurements in centimeters of the variables sepal length and petal length and width, respectively, for 50 flowers from each of 3 species of iris. 
+
+In your groups, complete Exercise 2. 
+
+1. Read in the iris_example.csv file using `read_csv(<FILE NAME>)`, assigning it to a variable called `dat`. Then print the data.
+
+(Note that if you are NOT working in a Project, you would have to list the full path to the file within the `read_csv()` command). 
+
+# Transform data with dplyr
+
+## Isolating data of interest
+
+::: {style="font-size: 1.4em"}
+
+[select()]{style="color:darkcyan"} - extract [variables]{style="color:darkcyan"} (columns)
+
+[filter()]{style="color:darkcyan"} - extract [cases]{style="color:darkcyan"} (rows)
+
+[arrange()]{style="color:darkcyan"} - reorder [cases]{style="color:darkcyan"}
+
+:::
+
+
+## select()
+
+Extract columns by name.
+
+::: {style="font-size: 1.4em"}
+
+```{r}
+#| echo: true
+#| eval: false
+
+select(.data, <column(s)>)
+
+# e.g.
+
+data %>%
+  select(column1, column2, column3)
+```
+
+:::
+
+- no need to specify data again within the `select` function here, because data is being "piped" into the function
+
+
+## select(): example
+
+The "babynames" dataset (from R package "babynames") from the US government gives baby names and frequency by year, according to Social Security card applications. 
+
+```{r}
+#| echo: false
+#| eval: true
+library(babynames)
+library(tidyverse)
+```
+
+::: {style="font-size: 1.4em"}
+
+```{r}
+#| echo: true
+#| eval: true
+
+select(babynames, name, prop)
+```
+
+:::
+
+## select(): example with pipe
+The following code uses the pipe and does the same thing as previous slide. 
+
+::: {style="font-size: 1.4em"}
+
+```{r}
+#| echo: true
+#| eval: true
+
+babynames %>%
+  select(name, prop)
+```
+
+:::
+ - R and RStudio will automatically tab indent the line following the pipe
+ - helps for readability of code (for yourself and others!)
+ 
+## select(): helper functions
+
+"mpg" dataset (from package "ggplot2") gives fuel economy data from 1999 to 2008 for 30 popular models of cars. 
+
+Select all columns that fall between 'cty'= city miles per gallon and 'class' = "type" of car (inclusive). 
+
+```{r}
+#| echo: true
+#| eval: true
+colnames(mpg)
+mpg %>%
+  select(cty:class)
+```
+
+
+## select(): helper functions
+
+Can also select variables with helper functions.
+
+Using the `-` selects all variables *except* those listed
+
+::: {style="font-size: 1.2em"}
+```{r}
+#| echo: true
+#| eval: true
+mpg %>%
+  select(-c(cty, hwy))
+```
+:::
+
+## select(): helper functions
+
+Select all variables starting with the letter "c". 
+
+::: {style="font-size: 1.4em"}
+```{r}
+#| echo: true
+#| eval: true
+mpg %>%
+  select(starts_with("c"))
+```
+:::
+
+## select(): helper functions
+
+Select all variables ending with the letter "y". 
+::: {style="font-size: 1.4em"}
+```{r}
+#| echo: true
+#| eval: true
+mpg %>%
+  select(ends_with("y"))
+```
+:::
+
+## filter
+
+Extract rows that meet logical criteria
+
+::: {style="font-size: 1.4em"}
+```{r}
+#| echo: true
+#| eval: false
+data %>%
+  filter(<criteria>)
+```
+:::
+
+- Criteria can be one or more logical tests. Returns each row for which the test is TRUE. 
+
+- Takes in a data frame or tibble and returns a data frame / tibble. 
+
+::: notes
+tribble is used to create a row-wise, readable tibble. useful for creating small tables of data. 
+a tibble is similar to a data frame. two key differences are 1) how they are printed and 2) . When a tibble is printed, it shows the first ten rows and all the columns that can be fit on a screen
+:::
+
+## filter(): example
+
+Filter to all observations (rows) with the name "Garrett". 
+
+::: {style="font-size: 1.4em"}
+```{r}
+#| echo: true
+#| eval: true
+babynames %>%
+  filter(name == "Garrett")
+```
+:::
+
+- `==` tests whether two things are equal or not. If yes, returns `TRUE`, if not, returns `FALSE`. 
+
+- Note: Be sure to use `==` as a logical criteria and not `=` (not trying to assign a value to a variable). 
+
+## Logical tests
+
+::: {style="font-size: 1.4em"}
+
+```{r}
+#| echo: true
+#| eval: false
+x < y      # less than
+x > y      # greater than
+x == y     # equal to
+x <= y     # less than or equal to
+x >= y     # greater than or equal to
+x != y     # not equal to
+x %in% y   # group membership
+is.na(x)   # is NA
+!is.na(x)  # is not NA
+```
+
+:::
+
+## Two common mistakes
+
+1. Using `=` instead of `==`
+
+::: {style="font-size: 1.4em"}
+
+```{r}
+#| echo: true
+#| eval: false
+
+babynames %>%
+  filter(name = "Sea")   # incorrect
+
+babynames %>%
+  filter(name == "Sea")  # correct
+```
+
+:::
+
+2. Forgetting quotes
+
+::: {style="font-size: 1.4em"}
+
+```{r}
+#| echo: true
+#| eval: false
+
+babynames %>%
+  filter(name = Sea)     # incorrect
+
+babynames %>%
+  filter(name == "Sea")  # correct
+```
+
+:::
+
+## fiter()
+
+::: {style="font-size: 1.4em"}
+
+```{r}
+#| echo: true
+#| eval: true
+
+babynames %>%
+  filter(name == "Garrett", year == 1880)
+```
+
+:::
+
+## filter() for multiple conditions
+
+
+::: {style="font-size: 1.4em"}
+
+```{r}
+#| echo: true
+#| eval: true
+
+babynames %>%
+  filter(name == "Garrett" & year == 1880)
+```
+
+:::
+
+## Boolean operators
+
+::: {style="font-size: 1.4em"}
+
+```{r}
+#| echo: true
+#| eval: false
+
+a & b         # and
+a | b         # or
+xor(a, b)     # exclusive or 
+!a            # not
+( )           # for grouping tests; 
+                 # & evaluates before |
+```
+
+:::
+
+- `xor`: if two entries the same, returns `F`
+- For grouping tests, `&` evaluates before `|`
+
+## Boolean operators: example
+
+::: {style="font-size: 1.4em"}
+
+```{r}
+#| echo: true
+#| eval: true
+
+x <- 2.5
+x >=2
+x < 3   
+
+x >= 2 & x < 3  # both true
+```
+
+:::
+
+## filter() with conditions
+
+::: {style="font-size: 1.4em"}
+
+```{r}
+#| echo: true
+#| eval: true
+
+babynames %>%
+  filter(name =="Sue", sex == "M")
+```
+
+:::
+
+## filter() with conditions
+
+parentheses matter!
+
+::: {style="font-size: 1.4em"}
+
+```{r}
+#| echo: true
+#| eval: true
+
+babynames %>%
+  filter((n==5 | n==6) & year == 1880)
+```
+:::
+ 
+## More common mistakes
+
+3. Collapsing multiple tests into one
+
+::: {style="font-size: 1.2em"}
+
+```{r}
+#| echo: true
+#| eval: false
+
+babynames %>%
+  filter(10 < n < 20) # throws an error
+
+babynames %>%
+  filter(10 < n, n < 20) # correct
+```
+
+:::
+
+## More Common Mistakes
+
+4. Stringing together multiple tests, when you could use `%in%`
+
+::: {style="font-size: 1.2em"}
+
+```{r}
+#| echo: true
+#| eval: false
+
+# will run, just not efficient
+babynames %>%
+  filter(n == 5 | n == 6 | n == 7 | n == 8) 
+
+# better
+babynames %>%
+  filter(n %in% c(5, 6, 7, 8)) 
+
+# or, alternatively:
+vec <- 5:8
+babynames %>%
+  filter(n %in% vec)
+```
+
+:::
+
+## Your turn!
+
+In your groups, complete Exercise 3. 
+
+## arrange()
+Order data from smallest to largest values
+
+::: {style="font-size: 1.2em"}
+
+```{r}
+#| echo: true
+#| eval: true
+
+babynames %>%
+  arrange(n)
+```
+
+:::
+
+## arrange()
+Order data from largest to smallest values
+
+::: {style="font-size: 1.2em"}
+
+```{r}
+#| echo: true
+#| eval: true
+
+babynames %>%
+  arrange(desc(n))
+```
+
+:::
+
+## Performing multiple steps
+
+::: {style="font-size: 1.2em"}
+```{r}
+#| echo: true
+#| eval: true
+
+boys_2015 <- babynames %>% filter(year == 2015, sex == "M")
+boys_2015 <- boys_2015 %>% select(name, n)
+boys_2015 <- boys_2015 %>% arrange(desc(n))
+boys_2015
+```
+:::
+
+## Performing multiple steps: nesting functions
+Not recommended - gets quite confusing
+
+::: {style="font-size: 1.2em"}
+
+```{r}
+#| echo: true
+#| eval: true
+
+arrange(select(filter(babynames, year == 2015, 
+  sex == "M"), name, n), desc(n))
+```
+
+:::
+
+## Performing multiple steps: piping each step
+  - Recommended!
+  - Tab indentation allows for easily readable code
+  - Easier to debug
+
+::: {style="font-size: 1.2em"}
+
+```{r}
+#| echo: true
+#| eval: false
+
+babynames %>% 
+  filter(year == 2015, sex == "M") %>%
+  select(name, n) %>%
+  arrange(desc(n))
+```
+
+:::
+
+## What if we wanted to visualize?
+How popular was the name "Garrett" for males over time?
+
+
+```{r}
+#| echo: true
+#| eval: true
+#| fig-width: 7
+#| fig-height: 4
+
+babynames %>% 
+  filter(name == "Garrett", sex == "M") %>%
+  select(year, prop) %>%
+  ggplot() +
+    geom_line(mapping = aes(year, prop))
+```
+
+
+## Plotting groups
+
+Plotting the popularity of the name "Michael" over time. 
+
+Note that we did not filter on sex. 
+
+
+```{r}
+#| echo: true
+#| eval: true
+#| fig-width: 7
+#| fig-height: 4
+babynames %>% 
+  filter(name == "Michael") %>%
+  ggplot() +
+    geom_point(mapping = aes(year, prop))
+```
+
+
+## Plotting groups
+
+```{r}
+#| echo: true
+#| eval: true
+#| fig-width: 7
+#| fig-height: 4.5
+
+babynames %>% 
+  filter(name == "Michael") %>%
+  ggplot() +
+    geom_line(mapping = aes(year, prop))
+```
+
+## Plotting groups, adding in color
+
+```{r}
+#| echo: true
+#| eval: true
+#| fig-width: 7
+#| fig-height: 4.5
+
+babynames %>% 
+  filter(name == "Michael") %>%
+  ggplot() +
+    geom_line(mapping = aes(year, prop, color = sex))
+```
+
+## Plotting with facet_wrap()
+
+```{r}
+#| echo: true
+#| eval: true
+#| fig-width: 9
+#| fig-height: 4.5
+
+babynames %>% 
+  filter(name == "Michael") %>%
+  ggplot() +
+    geom_line(mapping = aes(year, prop)) +
+    facet_wrap(~sex)
+```
+
+# summarize()
+
+## summarize()
+Compute table of summaries. 
+Takes a vector as input, returns single value as output. 
+See summary functions on cheat sheet!
+
+::: {style="font-size: 1.2em"}
+```{r}
+#| echo: true
+#| eval: true
+babynames %>%
+  head(3) # look at first three rows
+
+babynames %>%
+  summarize(total = sum(n), max = max(n))
+```
+
+:::
+
+## n()
+
+The number of rows in a dataset/group. 
+
+::: {style="font-size: 1.2em"}
+```{r}
+#| echo: true
+#| eval: true
+babynames %>%
+  head(3) # look at first three rows
+
+babynames %>%
+  summarize(n = n())
+```
+:::
+
+## n_distinct()
+
+The number of distinct values in a variable. 
+
+::: {style="font-size: 1.2em"}
+```{r}
+#| echo: true
+#| eval: true
+babynames %>%
+  head(3) # look at first three rows
+
+babynames %>%
+  summarize(n = n(), nname = n_distinct(name))
+```
+:::
+
+## How to define name popularity?
+
+A name is popular if: 
+
+1. Sums - a large number of children have the same name when you sum across years. 
+
+## Name popularity example: Khaleesi
+
+::: {style="font-size: 1.2em"}
+```{r}
+#| echo: true
+#| eval: true
+babynames %>%
+  filter(name == "Khaleesi" & sex == "F")
+```
+:::
+
+
+## Name popularity example: Khaleesi
+
+::: {style="font-size: 1.2em"}
+```{r}
+#| echo: true
+#| eval: true
+babynames %>%
+  filter(name == "Khaleesi" & sex == "F") %>%
+  summarize(total = sum(n))
+```
+
+:::
+
+Question: Can we do this for each name? 
+
+# Grouping cases
+
+## Grouping cases
+
+- Creating a small pollution dataset for a few cities based on small and large particles 
+
+- Units for amount are $\mu g / m^2$
+
+:::{.column width="60%"}
+```{r}
+#| echo: true
+#| eval: true
+pollution <- tribble(
+       ~city,   ~size, ~amount,
+  "New York", "large",      23, 
+  "New York", "small",      14, 
+  "London",   "large",      22,
+  "London",   "small",      16, 
+  "Beijing",  "large",     121, 
+  "Beijing",  "small",     56
+)
+
+```
+:::
+
+:::{.column width="35%"}
+```{r}
+pollution  %>%
+  as.data.frame()
+```
+:::
+
+## grouping
+
+:::{style="font-size: 1.2em"}
+```{r}
+#| echo: true
+#| eval: true
+pollution  %>%
+  summarize(mean = mean(amount), 
+            sum = sum(amount), 
+            n = n())
+```
+:::
+
+- This summary finds the overall mean, the overall sum, and the overall number of observations. 
+- Not quite what we want...
+- Would be better to get these values within certain groups (e.g. for each city)
+
+## group_by()
+
+- Use `group_by()` with `summarize()` to summarize by groups. 
+
+:::{style="font-size: 1.2em"}
+```{r}
+#| echo: true
+#| eval: true
+pollution  %>%
+  group_by(city)
+```
+:::
+
+Note that the `group_by()` function didn't change the data at all, but R lets us know that the data are now grouped by city. 
+## group_by()
+
+- Same code as before, but first grouping by city
+
+:::{style="font-size: 1.4em"}
+```{.r code-line-numbers="2"}
+pollution  %>%
+  group_by(city) %>%
+  summarize(mean = mean(amount), 
+            sum = sum(amount), 
+            n = n())
+```
+:::
+
+:::{style="font-size: 1.4em"}
+```{r }
+pollution  %>%
+  group_by(city) %>%
+  summarize(mean = mean(amount), 
+            sum = sum(amount), 
+            n = n())
+```
+:::
+
+## group_by()
+
+What would happen if we ran this code? 
+
+:::{style="font-size: 1.4em"}
+```{r }
+#| echo: true
+#| eval: false
+pollution  %>%
+  group_by(city, size) %>%
+  summarize(mean = mean(amount), 
+            sum = sum(amount), 
+            n = n())
+```
+:::
+
+## group_by()
+
+We would get original dataset back, since there is only one observation for each city and size combination! 
+
+:::{style="font-size: 1.4em"}
+```{r }
+#| echo: true
+#| eval: true
+pollution  %>%
+  group_by(city, size) %>%
+  summarize(mean = mean(amount), 
+            sum = sum(amount), 
+            n = n())
+```
+:::
+
+## Exercise 4
+
+In your groups, complete Exercise 4. 
+
+Group the `babynames` dataset by sex and then find out the total number of names for each group. 
+
+## ungroup()
+
+Removes grouping criteria from a data frame. 
+
+:::{style="font-size: 1.4em"}
+```{r }
+#| echo: true
+#| eval: true
+babynames  %>%
+  group_by(sex) %>%
+  ungroup() %>%
+  summarize(total = sum(n))
+```
+:::
+
+## Exercise 5
+
+Group the `babynames` dataset by name and sex, find the total number of names for each combination, and then arrange the totals from largest to smallest. 
+
+## plotting groups
+
+Plotting the top 10 most common names
+
+```{r }
+#| echo: false
+#| eval: true
+babynames %>%
+  group_by(name, sex) %>% 
+  summarise(total = sum(n)) %>% 
+  arrange(desc(total)) %>% 
+  ungroup() %>% 
+  slice(1:10) %>% 
+  ggplot() +
+    geom_col(mapping = aes(x = fct_reorder(name, 
+      desc(total)), y = total, fill = sex)) +
+    theme_bw() +
+    scale_fill_brewer() +
+    labs(x = "name")
+```
+
+## plotting groups
+
+Review the following code, then complete Exercise 6. 
+
+```{r }
+#| echo: true
+#| eval: false
+babynames %>%
+  group_by(name, sex) %>% 
+  summarise(total = sum(n)) %>% 
+  arrange(desc(total)) %>% 
+  ungroup() %>% 
+  slice(1:10) %>% 
+  ggplot() +
+    geom_col(mapping = aes(x = fct_reorder(name, 
+      desc(total)), y = total, fill = sex)) +
+    theme_bw() +
+    scale_fill_brewer() +
+    labs(x = "name")
+```
+
+## Visualizing the number of children over time
+
+```{r}
+#| echo: true
+#| eval: true
+babynames %>%
+  group_by(year) %>% 
+  summarise(n_children = sum(n)) %>% 
+  ggplot() +
+    geom_line(mapping = aes(x = year, y = n_children))
+```
+
+# mutate()
+
+## mutate()
+
+Create new columns
+
+:::{style="font-size: 1.4em"}
+```{r}
+#| echo: true
+#| eval: true
+babynames %>%
+  mutate(percent = round(prop*100, 2))
+```
+:::
+
+## mutate()
+
+:::{style="font-size: 1.4em"}
+```{r}
+#| echo: true
+#| eval: true
+babynames %>%
+  mutate(percent = round(prop*100, 2), 
+         nper = round(percent))
+```
+:::
+
+## recap
+
+::: {.column width="40%"}
+
+![](images/tidy_summary.png)
+
+:::
+
+::: {.column width="50%"}
+
+- Extract variables with `select()`
+- Extract cases with `filter()`
+- Arrange cases with `arrange()`
+- Make tables of summaries with `summarize()`
+- Make a new variable with `mutate()`
+
+:::
+
+# ggplot2()
+
+## Telling a story with data
+
+"The simple graph has brought more information to the data analyst's mind than any other device." - John Tukey
+
+## ggplot2()
+
+Grammar of graphics
+
+![](images/gg.png)
+
+
+## Dataset exploration: mpg
+
+Fuel economy data for 38 models of car.
+Find out more by typing `?mpg` into the console. 
+
+:::{style="font-size: 1.4em"}
+
+```{r}
+#| echo: true
+#| eval: false
+mpg
+```
+
+:::
+
+![](images/mpg.png)
+
+## Exercise 6
+
+- In your groups:
+
+- What relationship do you expect to see between engine size (displ) and mileage (hwy)?
+
+- Run the following code to explore this relationship. What do you see? 
+
+```{r}
+#| echo: true
+#| eval: false
+mpg %>%                             
+  ggplot(mapping = aes(x = displ, y = hwy)) +  
+  geom_point()                     
+```
+
+## Exercise 6
+
+:::{style="font-size: 1.2em"}
+
+```{r}
+#| echo: true
+#| eval: true
+mpg %>%                             # use mpg data
+  ggplot(mapping = aes(x = displ,   # engine size
+                       y = hwy)) +  # mileage  
+  geom_point()                      # add points
+```
+:::
+
+## ggplot2()
+
+- "Initialize" a plot with `ggplot2()`
+- Add layers with geom_functions
+- Pro tip: Always put the + at the end of a line, never at the start!
+
+:::{style="font-size: 1.2em"}
+```{r}
+#| echo: true
+#| eval: false
+mpg %>%                             # use mpg data
+  ggplot(mapping = aes(x = displ,   # engine size
+                       y = hwy)) +  # mileage  
+  geom_point()                      # add points
+```
+:::
+
+## ggplot2() template
+
+:::{style="font-size: 1.4em"}
+```{r}
+#| echo: true
+#| eval: false
+
+<DATA> %>%
+  ggplot(mapping = aes(<MAPPINGS>)) +
+  <GEOM_FUNCTION>
+```
+:::
+
+## ggplot2()
+Visualizations can help us continue to explore the data. 
+
+Why do cars in upper right of plot get better mileage?
+
+::: {.absolute top="42%" left="4%" width="150"}
+::: {.blackbox}
+:::
+:::
+
+```{r}
+mpg %>%                             # use mpg data
+  ggplot(mapping = aes(x = displ,   # engine size
+                       y = hwy)) +  # mileage  
+  geom_point()                      # add points
+```
+
+
+
+## Visualize data with ggplot2
+How can we use aesthetics to better tell our story? 
+
+After telling ggplot() your `x` and `y`, can give additional aesthetic property, and the variable to map it to. 
+```{r}
+#| echo: true
+#| eval: false
+
+# changew color of last aesthetic
+ggplot(mpg) + geom_point(aes(x = displ, y = hwy, color = class))
+ggplot(mpg) + geom_point(aes(x = displ, y = hwy, size = class))
+ggplot(mpg) + geom_point(aes(x = displ, y = hwy, shape = class))
+ggplot(mpg) + geom_point(aes(x = displ, y = hwy, alpha = class))
+
+```
+
+## aesthetics
+
+Can alter color and size for discrete and continuous variables, and shape for discrete variables. 
+
+
+![](images/aes.png)
+
+## aesthetics
+
+Note legend is added automatically. 
+```{r}
+#| echo: true
+#| eval: true
+mpg %>%
+  ggplot(mapping = aes(x = displ, y = hwy, color = class)) +
+  geom_point()
+```
+# facets
+
+## facets
+Subplots that display subsets of data
+
+```{r}
+mpg %>%
+  filter(manufacturer %in% unique(mpg$manufacturer)[1:8]) %>%
+  ggplot(mapping = aes(x = displ, y = hwy)) +
+  geom_point() +
+  facet_wrap(~manufacturer)
+```
+## facet template
+You can plot data with facets using the following template:
+
+
+:::{style="font-size: 1.4em"}
+```{r}
+#| echo: true
+#| eval: false
+
+<DATA> %>%
+  ggplot(mapping = aes(<MAPPINGS>)) +
+  <GEOM_FUNCTION> +
+  <FACET_FUNCTION>
+```
+
+:::
+
+- `facet_grid()`: 2D grid, rows ~ cols, . for no split
+- `facet_wrap()`: 1D ribbon wrapped into 2D
+look up how these differ..
+
+## labeling the graph
+
+Exercise 7
+- Among your groups, run the following code in a new chunk. 
+
+- What does each line within the `labs()` function do? 
+
+:::{style="font-size: 1.4em"}
+```{r}
+#| echo: true
+#| eval: false
+
+mpg %>%
+  ggplot(mapping = aes(displ, hwy, color = class)) +
+  geom_point() +
+  labs(title = "Fuel Efficiency by Engine Size",
+       subtitle = "Data facetted by class",
+       x = "Engine Size (displacement in liters)",
+       y = "Fuel Efficiency (MPG)",
+       color = "Class of\nAutomobile",
+       caption = "Data from the EPA")
+
+```
+
+:::
+
+## labeling the plot
+
+```{r}
+mpg %>%
+  ggplot(mapping = aes(displ, hwy, color = class)) +
+  geom_point() +
+  labs(title = "Fuel Efficiency by Engine Size",
+       subtitle = "Data facetted by class",
+       x = "Engine Size (displacement in liters)",
+       y = "Fuel Efficiency (MPG)",
+       color = "Class of\nAutomobile",
+       caption = "Data from the EPA")
+
+```
+
+# geoms
+
+## geoms
+
+:::{style="font-size: .8em"}
+- How are these plots different?
+
+- Different geometric object, e.g. the visual object used to represent the data. 
+:::
+
+::: {.column width="49%"}
+```{r}
+mpg %>% 
+  ggplot() +
+  geom_point(aes(x = displ, y = hwy))
+```
+:::
+
+::: {.column width="49%"}
+```{r}
+mpg %>% 
+  ggplot() +
+  geom_smooth(aes(x = displ, y = hwy))
+```
+:::
+
+:::{style="font-size: .8em"}
+Check out cheat sheets for more geom functions. 
+:::
+## geom functions
+
+:::{style="font-size: .8em"}
+
+- Google is your friend! I often use: "How to plot ____ in r ggplot"
+- check help documentation often!
+:::
+
+::: {style="fig-width: 0.8em"}
+![](images/geom.png)
+:::
+
+## Exercise 8
+
+:::{style="font-size: .7em"}
+1. In a code chunk, create the code to produce the following plot. 
+2. In a new code chunk, alter the code to produce boxplots. Use the cheatsheet!
+3. Bonus: Add an informative title to the plot. 
+:::
+
+```{r}
+mpg %>%
+  ggplot() +
+  aes(x = class, y = hwy) +
+  geom_point()
+```
+
+## Altering options within geom functions
+What is the difference between these two plots? 
+
+::: {.column width="49%"}
+```{r}
+#|fig-width = 2.5
+#|fig-height = 3
+mpg %>%
+  ggplot() +
+  geom_histogram(aes(x = hwy))
+```
+:::
+
+::: {.column width="49%"}
+```{r}
+#|fig-width = 2.5
+#|fig-height = 3
+mpg %>%
+  ggplot() +
+  geom_histogram(aes(x = hwy), bins = 17)
+```
+:::
+
+## geom functions
+Check help pages!
+ - scan for relevant information, ignore what doesn't make sense, try examples!
+ 
+ - `?geom_histogram`
+ 
+![](images/help_geom.png)
+
+
+## Exercise 10
+
+Make a bar chart of `class` below. Use the cheat sheet and/or google. Hint: do not supply a `y` variable. 
+
+```{r}
+mpg %>%
+  ggplot() +
+  geom_bar(aes(x = class, fill = class))
+```
+
+## Exercise 10
+I do this all the time...
+
+```{r}
+#| echo: true
+#| eval: true
+mpg %>%
+  ggplot() +
+  geom_bar(aes(x = class, color = class))
+```
+
+## Exercise 10
+
+```{r}
+#| echo: true
+#| eval: true
+mpg %>%
+  ggplot() +
+  geom_bar(aes(x = class, fill = class))
+```
+
+
+## filling with a new variable
+
+```{r}
+#| echo: true
+#| eval: true
+mpg %>%
+  ggplot() +
+  geom_bar(aes(x = class, fill = drv))
+```
+
+## Stacking layers
+
+What will this code do?
+
+:::{style="font-size: 1.4em"}
+```{r}
+#| echo: true
+#| eval: false
+mpg %>%
+  ggplot() +
+  geom_point(aes(displ, hwy)) +
+  geom_smooth(aes(displ, hwy))
+```
+:::
+
+## Stacking layers
+Each new geom adds a new layer
+
+:::{style="font-size: 1.2em"}
+```{r}
+#| echo: true
+#| eval: true
+mpg %>%
+  ggplot() +
+  geom_point(aes(displ, hwy)) +
+  geom_smooth(aes(displ, hwy))
+```
+:::
+
+# global vs local
+## changing colors for different geom layers
+
+Mappings (and data) appearing in `ggplot()` will apply globally to each layer. 
+```{r}
+#| echo: true
+#| eval: true
+mpg %>%
+  ggplot(mapping = aes(x = displ, y = hwy)) +
+  geom_point(mapping = aes(color = drv)) +
+  geom_smooth()
+```
+## global vs. local
+Data can also be set locally or globally.
+```{r}
+#| echo: true
+#| eval: true
+ggplot(data = mpg, mapping = aes(x = displ, y = hwy)) +
+  geom_point(mapping = aes(color = drv)) + 
+  geom_smooth(data = filter(mpg, drv == "f"))
+
+```
+
+## ggplot2() template
+
+An example of a `ggplot2()` template
+
+![](images/ggplot_temp.png)
+
+
+## interactivity
+
+What's different about this plot? Run the code!
+```{r}
+#| echo: true
+#| eval: false
+p <- ggplot(mpg) + 
+  geom_point(aes(displ, hwy)) +
+  geom_smooth(aes(displ, hwy))
+
+library(plotly)
+ggplotly(p)
+
+```
+
+## interactivity
+
+```{r}
+#| echo: true
+#| eval: true
+p <- ggplot(mpg) + 
+  geom_point(aes(displ, hwy)) +
+  geom_smooth(aes(displ, hwy))
+
+library(plotly)
+ggplotly(p)
+
+```
+# interactivity
+
+## plotly
+Tools for making interactive plots. 
+plot.ly/ggplot2
+
+![](images/plotly.png)
+
+# saving graphs
+
+## Saving graphs
+Graphic User Interface (GUI) method: right-click on plot
+
+![](images/right-click.png)
+
+## code method
+
+`ggsave()` saves the last plot (by default). 
+
+Uses size on screen:
+```{r}
+#| echo: true
+#| eval: false
+ggsave("my-plot.pdf")
+ggsave("my-plot.png")
+```
+
+Specify size, units:
+
+```{r}
+#| echo: true
+#| eval: false
+ggsave("my-plot.pdf", 
+       width = 4, 
+       unit = "in")
+```
+
+
+
+
+# Communicate results with R Markdown
+
+# Modeling data
+
+## Models
+Building models
+
+![](images/models.png)
+
+## Models
+A low dimensional description of a higher dimensional data set.
+
+![](images/models2.png)
+
+
+## What is the model function? 
+
+![](images/models3.png)
+
+## What uncertainty is associated with the chosen model?
+
+![](images/uncertainty.png)
+
+## What are the residuals?
+
+![](images/residuals.png)
+
+
+## What are the predictions?
+
+![](images/predictions.png)
+
+## (Popular) modeling functions in R
+
+:::{style="font-size: .9em"}
+```{r}
+f <- c("lm()", "glm()", "gam()", 
+       "glmnet()", "rlm()", "rpart()", 
+       "randomForest()", "xgboost()")
+pa <- c("stats", "stats", "mgcv", "glmnet", 
+        "MASS", "rpart", "randomForest", 
+        "xgboost")
+fits <- c("linear models", 
+          "generalized linear models", 
+          "generalized additive models", 
+          "penalized linear models", 
+          "robust linear models", 
+          "trees", 
+          "random forests", 
+          "gradient boosting machines")
+df <- data.frame(f, pa, fits)
+colnames(df) <- c("function", "package", "fits")
+knitr::kable(df)
+```
+
+:::
+
+::: notes
+We will focus on lm() for now
+:::
+
+## Modeling example dataset from modelr package
+
+Income predictors extracted from National Longitudinal Study, sponsored by the US Bureau of Labor Statistics. 
+
+:::{style="font-size: 1.4em"}
+```{r}
+#| echo: true
+#| eval: true
+library(modelr)
+wages <- heights %>%
+  filter(income > 0)
+```
+
+:::
+
+## wages dataset
+
+```{r}
+#| echo: true
+#| eval: true
+wages %>%
+  slice(1:6) %>% # show only first six rows
+  knitr::kable()  # display in nice table format
+```
+
+
+## wages dataset (continued)
+
+Let's say we want to explore income as a variable in a linear model. 
+```{r}
+#| echo: true
+#| eval: true
+wages %>%
+  ggplot(aes(income)) +
+  geom_histogram()
+```
+Distribution is right-skewed. For `lm()` an assumption is that the data are normally distributed. Let's try a log transformation. 
+
+## wages data: log transformation
+
+```{r}
+#| echo: true
+#| eval: true
+wages %>%
+  ggplot(aes(log(income))) +
+  geom_histogram(binwidth = 0.25)
+```
+
+# lm()
+
+## lm()
+
+Fits a linear model to the data. 
+ 
+  - First argument is a formula describing the model equation. 
+  - Second argument is the data. 
+  - see `?lm()` for help. 
+
+```{r}
+#| echo: true
+#| eval: true
+
+lm(log(income) ~ education, data = wages)
+```
+
+## formulas
+
+Formula only needs to include the response and predictors
+
+$$y = \alpha + \beta x + \epsilon$$
+`y ~ x`
+
+## Exercise 10
+
+Fit the model below and then examine the output. What does it look like? 
+
+`mod_e <- lm(log(income) ~ education, data = wages)`
+
+
+## . 
+
+Use "." to pipe input to somewhere other than the first argument. 
+
+In this case, wages will be passed to the location of the `.`
+```{r}
+#| echo: true
+mod_e <- wages %>%
+  lm(log(income) ~ education, data = .)
+```
+
+# broom
+
+## broom
+
+Turns model output into data frames!
+
+```{r}
+#| echo: true
+#| eval: true
+# install.packages("tidyverse")
+library(broom)
+```
+
+
+## broom
+Broom includes three functions which work for most types of models (and can be extended to more):
+
+1. `tidy()` - returns model coefficients, stats
+2. `glance()` - returns model diagnostics
+3. `augment()` - returns predictions, residuals, and other raw values
+
+## tidy()
+
+Returns useful model output as a data frame
+
+```{r}
+#| echo: true
+#| eval: true
+mod_e <- wages %>%
+  lm(log(income) ~ education, data = .)
+
+mod_e %>%
+  tidy() %>%
+  knitr::kable()
+```
+
+## glance()
+
+Returns common model diagnostics as a data frame
+
+```{r}
+#| echo: true
+#| eval: true
+mod_e %>%
+  glance() %>%
+  knitr::kable()
+```
+
+## augment()
+
+Returns data frame of model output related to original data points
+```{r}
+#| echo: true
+#| eval: true
+mod_e %>%
+  augment() %>%
+  knitr::kable()
+```
+
+
+## Exercise 11
+
+Use a pipe to model `log(income)` against `height`. Then use broom and dplyr to extract:
+
+1. The coefficient estimates and their related statistics. 
+
+2. The `adj.r.squared` and `p.value` for the overall model.
+
+
+## Exercise 11
+```{r}
+#| echo: true
+#| eval: true
+library(broom)
+mod_h <- wages %>% 
+  lm(log(income) ~ height, data=.)
+mod_h %>% 
+  tidy()
+mod_h %>% 
+  glance() %>% 
+  select(adj.r.squared, p.value)
+```
+
+## comparing models
+
+```{r}
+#| echo: true
+mod_h %>%
+  tidy() %>% filter(p.value < 0.05)
+
+mod_e %>%
+  tidy() %>% filter(p.value < 0.05)
+```
+So, which determines income?
+
+# multivariate regression
+
+## multivariate regression
+To fit multiple predictors, add multiple variables to the formula: 
+
+```{r}
+#| echo: true
+#| eval: false
+log(income) ~ education + height
+```
+
+## modeling on education and height
+
+```{r}
+#| echo: true
+#| eval: true
+mod_eh <- wages %>%
+  lm(log(income) ~ education + height, data = .)
+
+mod_eh %>%
+  tidy()
+```
+
+
+## Exercise 12
+
+Model `log(income)` against `education` and `height` and `sex`. Can you interpret the coefficients?
+
+## Exercise 12
+
+```{r}
+#| echo: true
+#| eval: true
+mod_ehs <- wages %>%
+  lm(log(income) ~ education + height + sex, data = .)
+
+mod_ehs %>%
+  tidy()
+```
+
+Where is sexfemale?
+
+## Exercise 12
+```{r}
+mod_ehs %>%
+  tidy()
+```
+
+
+The mean log(income) for a female (baseline) is:
+log(income) = 7.79 + 0.148 * education + 0.00673 * height
+
+The mean log(income) for a male (baseline + adjustment) is:
+log(income) = 7.79 + 0.148 * education + 0.00673 * height + 0.462
+
+# model visualization
+
+## model visualization
+
+```{r}
+#| echo: true
+wages %>%
+  ggplot(aes(x = height, y = log(income))) +
+    geom_point(alpha = 0.1) +
+    geom_smooth(method = lm)   # fits y~x (mod_h)
+
+```
+
+## geom_smooth()
+
+Adds model line for predictiong `y~x` (default):
+
+```{r}
+#| echo: true
+#| eval: false
+p + geom_smooth(method = lm, se = TRUE, ...)
+```
+
+- First argument is an R modeling function to use to generate the line
+
+- `se = TRUE` tells R to include standard error bars
+- see help page for more argument options
+
+What about complex models, or residuals?
+
+## add_predictions()
+
+- In the modelr package
+- Uses the values in a data frame to generate a prediction for each case. Can be new data!
+
+```{r}
+#| echo: true
+#| eval: false
+add_predictions(data, model, var = "pred")
+```
+
+- `var = "pred"` gives new column this name
+
+## add_predictions() for height lm
+
+```{r}
+#| echo: true
+wages %>%
+  add_predictions(mod_h)
+```
+
+## add_residuals()
+
+Uses the values in a data frame to generate a residual for each case. 
+
+```{r}
+#| echo: true
+#| eval: false
+add_residuals(data, model, var = "resid")
+```
+
+- `var = "resid"` gives new column this name
+
+## add_residuals()
+
+```{r}
+#| echo: true
+wages %>%
+  add_residuals(mod_h)
+```
+
+## Exercise 13
+
+Use add_residuals() to create the plot below. 
+
+```{r}
+wages %>% 
+  add_predictions(mod_ehs) %>% 
+  ggplot(mapping = aes(x = height, y = pred, color = sex)) +
+    geom_line() +
+    facet_wrap(~ education)
+```
+## Exercise 13
+
+```{r}
+#| echo: true
+
+wages %>% 
+  add_predictions(mod_ehs) %>% 
+  ggplot(mapping = aes(x = height, y = pred, color = sex)) +
+    geom_line() +
+    facet_wrap(~ education)
+
+```
+
+## spread_residuals()
+
+Adds residuals for multiple models, each in their own column.
+
+```{r}
+#| echo: true
+#| eval: false
+spread_residuals(data, model1, model2, ...)
+```
+
+
+## spread_residuals()
+
+```{r}
+#| echo: true
+wages %>%
+  spread_residuals(mod_h, mod_eh, mod_ehs)
+```
+## gather_residuals()
+
+Adds residuals for multiple models as a pair of key:value columns (model:resid)
+
+```{r}
+#| echo: true
+#| eval: false
+gather_residuals(data, model1, model2, ...)
+```
+
+- Adds residuals from model1 and model2 to the cases in the specified data (duplicating rows as necessary)
+
+## gather_residuals()
+
+```{r}
+#| echo: true
+wages %>%
+  gather_residuals(mod_h, mod_eh, mod_ehs) %>%
+  arrange(income, height)
+```
+
+## predictions
+
+Modelr provides the equivalent functions for predictions
+
+::: {.column width="49%"}
+- `add_predictions()`
+- `spread_predictions()`
+- `gather_predictions()`
+
+:::
+
+::: {.column width="49%"}
+- `add_residuals()`
+- `spread_residuals()`
+- `gather_residuals()`
+
+:::
+
+## Recap
+
+::: {.column width="65%"}
+
+Use `glance()`, `tidy()`, and `augment()` to return model values in a data frame. 
+
+Use `add_predictions()` or `spread_predictions()` to visualize predictions. 
+
+Use `add_residuals()` or `gather_residuals()` or `spread_residuals()` to visualize residuals. 
+
+:::
+
+::: {.column width="30%"}
+
+![](images/broom.png)
+![](images/modelr.png)
+
+:::
